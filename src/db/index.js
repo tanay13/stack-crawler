@@ -7,7 +7,7 @@ try {
     credential: admin.credential.cert(serviceAccount),
   });
 
-  console.log("COnnected");
+  console.log("Database Connected..");
 } catch (e) {
   console.log(e);
 }

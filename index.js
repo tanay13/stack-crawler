@@ -1,8 +1,11 @@
 const cheerio = require("cheerio");
-const Bottleneck = require("bottleneck");
+
 const axios = require("axios");
 const saveData = require("./src/db/dbAction");
 const addData = require("./src/csv");
+
+const Bottleneck = require("bottleneck");
+const performTask = require("./src/throttle");
 
 // setting the minimum relaxation time and maximum concurrency
 const limiter = new Bottleneck({
@@ -11,7 +14,6 @@ const limiter = new Bottleneck({
 });
 
 // Function to crawl the pages and store data
-
 function crawler(number) {
   return axios(
     `https://stackoverflow.com/questions?tab=newest&page=${number}`
@@ -42,18 +44,20 @@ function crawler(number) {
 
       const views = $(e).children(".statscontainer").children(".views").text();
 
+      const url = prefix + link;
+      const answer = answers.trim();
+
       questions = {
-        QUESTIONS: prefix + link,
+        QUESTIONS: url,
         VOTES: votes,
-        ANSWERS: answers.trim(),
+        ANSWERS: answer,
         VIEWS: views,
       };
 
       await addData(questions);
 
       const _id = link.substring(11, 19);
-
-      await saveData(_id, questions);
+      await saveData(_id, url, votes, answer, views);
     });
     console.log(`Page successfully saved...`);
   });
@@ -61,22 +65,4 @@ function crawler(number) {
 
 const throttledCrawling = limiter.wrap(crawler);
 
-async function getAllResults() {
-  const pageNums = [];
-  const count = 20;
-  for (let i = 1; i <= count; i++) {
-    pageNums.push({
-      page: i,
-    });
-  }
-  const allThePromises = pageNums.map((page) => {
-    return throttledCrawling(page);
-  });
-  try {
-    const results = await Promise.all(allThePromises);
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-getAllResults();
+performTask(throttledCrawling);
