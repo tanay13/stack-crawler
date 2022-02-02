@@ -1,6 +1,6 @@
 async function performTask(throttledCrawling) {
   const pageNums = [];
-  const count = 20;
+  const count = 10000;
   for (let i = 1; i <= count; i++) {
     pageNums.push({
       page: i,

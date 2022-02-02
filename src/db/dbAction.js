@@ -1,5 +1,4 @@
 const { db } = require("./index");
-var admin = require("firebase-admin");
 
 async function saveData(_id, url, votes, answer, views) {
   const questionRef = db.collection("questions").doc(_id);
