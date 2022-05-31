@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@fast-csv/format": "^4.3.5",
-    "axios": "^0.25.0",
+    "axios": "^26.0.0",
     "bluebird": "^3.7.2",
     "bottleneck": "^2.19.5",
     "cheerio": "^1.0.0-rc.10",
